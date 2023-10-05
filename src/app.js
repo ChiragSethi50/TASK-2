@@ -12,6 +12,18 @@ const static_path = path.join(__dirname, "../public");
 const template_Path = path.join(__dirname, "../templates/views");
 const partials_Path = path.join(__dirname, "../templates/partials");
 
+app.use(
+  "/css",
+  express.static(path.join(__dirname, "../node_modules/bootstrap/dist/css"))
+);
+app.use(
+  "/js",
+  express.static(path.join(__dirname, "../node_modules/bootstrap/dist/js"))
+);
+app.use(
+  "/jq",
+  express.static(path.join(__dirname, "../node_modules/jquery/dist"))
+);
 app.use(express.static(static_path));
 app.set("view engine", "hbs");
 app.set("views", template_path);
@@ -45,7 +57,17 @@ app.get("/home", (req, res) => {
       res.status(500).send(error);
     }
   });
-  app.post("/signup", async (req, res) => {
+app.post("/profile", async (req, res) => {
+  try {
+    // res.send(req.body)
+    const addlogData = new addlog(req.body);
+    await addlogData.save();
+    res.status(201).render("index");
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+app.post("/signup", async (req, res) => {
     try {
     
       const UserlogData = new Userlog(req.body);
@@ -55,6 +77,7 @@ app.get("/home", (req, res) => {
       res.status(500).send(error);
     }
   });
+
   app.post("/login", (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
